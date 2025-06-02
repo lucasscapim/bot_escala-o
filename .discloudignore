@@ -1,0 +1,3 @@
+TYPE=bot
+NAME=escalação
+MAIN=index.js

@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Acao {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  nome        String
+  categoria   String
+  descricao   String
+  minParticip   Int
+  maxParticip   Int
+  armamento   String
+}
+
+model Log {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  acaoId            String
+  vitoria           Boolean  @default(false)
+  membros           String[]  // Array com IDs dos participantes no Discord
+  status            Status   @default(EM_ANDAMENTO)
+  criadoEm          DateTime @default(now())
+  mensagemId        String
+}
+
+enum Status {
+  EM_ANDAMENTO
+  FINALIZADA
+}
