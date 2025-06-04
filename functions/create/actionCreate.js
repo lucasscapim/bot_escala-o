@@ -1,9 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const dotenv  = require('dotenv').config();
+const dotenv = require('dotenv').config();
 const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
 
 async function actionSelect(interaction, client) {
+    const nickname = interaction.user.nickname || interaction.user.username;
 
     const ESCALACAO_ID = process.env.ESCALACAO_ID;
 
@@ -43,27 +44,44 @@ async function actionSelect(interaction, client) {
     const embed = new EmbedBuilder()
         .setColor('#237feb')
         .setTitle('Relátorio de Ação')
-        .setDescription(`Ação selecionada: ${result.nome}\n Armamento ${result.armamento} \n Categoria: ${result.categoria}\n \nRequisitos:\n\n Minimo: ${result.minParticip}\n Máximo: ${result.maxParticip}\n\n Participantes:\n`)
-        .setFooter({ text: `ID da Ação: ${acaoId}` });
+        .setDescription(`Ação selecionada: ${result.nome}\n Armamento ${result.armamento} \n Categoria: ${result.categoria}\n Minimo: ${result.minParticip}\n Máximo: ${result.maxParticip}\n\n Participantes:\n_Sem participantes no momento_\n\n`)
+        .setFooter({ 
+            iconURL: interaction.user.displayAvatarURL(), 
+            text: `Ação criada por: ${nickname}` });
 
-    const entrar_acao = new ButtonBuilder()
-        .setCustomId('entry_action')
-        .setLabel('Entrar na Ação')
+    const toggle_acao = new ButtonBuilder()
+        .setCustomId('toggle_acao')
+        .setLabel('Entrar/Sair da Ação') // Um único botão para ambos
         .setStyle(ButtonStyle.Primary);
 
-    const sair_acao = new ButtonBuilder()
-        .setCustomId('exit_action')
-        .setLabel('Sair da Ação')
+    const vitoria_acao = new ButtonBuilder()
+        .setCustomId('victory_action')
+        .setLabel('Vitoria')
+        .setStyle(ButtonStyle.Success);
+    const derrota_acao = new ButtonBuilder()
+        .setCustomId('defeat_action')
+        .setLabel('Derrota')
         .setStyle(ButtonStyle.Danger);
+    const cancelar_acao = new ButtonBuilder()
+        .setCustomId('cancel_action')
+        .setLabel('Cancelar Ação')
+        .setStyle(ButtonStyle.Secondary);
 
     console.log(`[DEBUG] Ação selecionada: ${result.nome}`);
 
     const row = new ActionRowBuilder()
-        .addComponents(entrar_acao, sair_acao);
+        .addComponents(toggle_acao);
+    const row2 = new ActionRowBuilder()
+        .addComponents(vitoria_acao, derrota_acao, cancelar_acao);
+    console.log(`[DEBUG] Enviando mensagem de ação para o canal de escalação: ${canal_escalacao.id}`);
 
+    interaction.reply({
+        content: 'Ação selecionada com sucesso! Você pode ver os detalhes abaixo.',
+        ephemeral: true
+    });
     const resposta = await canal_escalacao.send({
         embeds: [embed],
-        components: [row]
+        components: [row, row2]
     }).catch(err => {
         console.error(`[ERROR] Não foi possível enviar a mensagem no canal de escalação:`, err);
         return interaction.reply({
@@ -72,13 +90,14 @@ async function actionSelect(interaction, client) {
         });
     });
 
+
     const action_db = await prisma.log.create({
-            data: {
-                acaoId: acaoId,
-                //membros: [interaction.user.id],
-                mensagemId: resposta.id,
-            }
-        });
+        data: {
+            acaoId: acaoId,
+            //membros: [interaction.user.id],
+            mensagemId: resposta.id,
+        }
+    });
 
     console.log(`[DEBUG] Resposta enviada para o usuário: ${resposta.id}`);
 

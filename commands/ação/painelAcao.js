@@ -18,9 +18,21 @@ module.exports = {
             .setCustomId('addaction')
             .setLabel('Adicionar Ação')
             .setStyle(ButtonStyle.Primary);
+        const victory_channel = new ButtonBuilder()
+            .setCustomId('victory_channel')
+            .setLabel('Canal de Vitória')
+            .setStyle(ButtonStyle.Primary);
+        const defeat_channel = new ButtonBuilder()
+            .setCustomId('defeat_channel')
+            .setLabel('Canal de Derrota')
+            .setStyle(ButtonStyle.Primary);
+        const cancel_channel = new ButtonBuilder()
+            .setCustomId('cancel_channel')
+            .setLabel('Canal de Cancelamento')
+            .setStyle(ButtonStyle.Primary);
 
         const row = new ActionRowBuilder()
-            .addComponents(confirm);
+            .addComponents(confirm, victory_channel, defeat_channel, cancel_channel);
 
         await interaction.reply({
             embeds: [embed],

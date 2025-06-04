@@ -7,31 +7,36 @@ async function actionRegister(interaction, client) {
         .setTitle('Adicionar Nova Ação');
 
     const nameAction = new TextInputBuilder()
-        .setCustomId('actionNameInput')
+        .setCustomId('actionNameInput') 
+        .required(true)
         .setLabel('Nome da Ação')
         .setPlaceholder('Ex: Banco Central')
         .setStyle(TextInputStyle.Short);
 
     const levelAction = new TextInputBuilder()
         .setCustomId('actionLevelInput')
+        .required(true)
         .setLabel('Categoria (Pequena, Média, Grande)')
         .setPlaceholder('Ex: Pequena, Média, Grande')
         .setStyle(TextInputStyle.Short);
 
     const descriptionAction = new TextInputBuilder()
         .setCustomId('actionDescriptionInput')
+        .required(true)
         .setLabel('Descrição da Ação')
         .setPlaceholder('Ex: Roubo de Banco, Assalto a Metrô')
         .setStyle(TextInputStyle.Paragraph);
 
     const numberAction = new TextInputBuilder()
         .setCustomId('actionNumberInput')
+        .required(true)
         .setLabel('Min/Max Participantes (formato: Min, Max)')
         .setPlaceholder('Ex: 1, 10')
         .setStyle(TextInputStyle.Short);
 
     const fireAction = new TextInputBuilder()
         .setCustomId('actionFireInput')
+        .required(true)
         .setLabel('Armamentos Ação')
         .setPlaceholder('Ex: Fuzil, Pistola')
         .setStyle(TextInputStyle.Short);

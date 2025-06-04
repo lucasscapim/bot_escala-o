@@ -13,7 +13,7 @@ module.exports = {
         .setName('setup_escalacao')
         .setDescription('Permite iniciar o processo de escalação de ações'),
 
-    async execute(interaction) {
+    async execute(interaction, client) {
         console.log('[DEBUG] Comando /setup_escalacao executado');
 
         const acoes = await prisma.acao.findMany({
@@ -78,10 +78,15 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(selectMenu);
         const row2 = new ActionRowBuilder().addComponents(selectMenuMédia);
         const row3 = new ActionRowBuilder().addComponents(selectMenuGrande);
-        interaction.reply({
+        const escalacaoChannel = await client.channels.fetch("1379768822071820399");
+        escalacaoChannel.send({
             embeds: [embed],
             components: [row, row2, row3],
             ephemeral: false
+        });
+        await interaction.reply({
+            content: 'A escalação foi iniciada com sucesso! Confira o canal de ações para mais detalhes. <#1379768822071820399>',
+            ephemeral: true
         });
     }
 };

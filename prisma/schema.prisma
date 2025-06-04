@@ -20,14 +20,16 @@ model Acao {
 model Log {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   acaoId            String
-  vitoria           Boolean  @default(false)
   membros           String[]  // Array com IDs dos participantes no Discord
   status            Status   @default(EM_ANDAMENTO)
   criadoEm          DateTime @default(now())
-  mensagemId        String
+  atualizadoEm      DateTime? @updatedAt
+  mensagemId        String @unique
 }
 
 enum Status {
   EM_ANDAMENTO
-  FINALIZADA
+  VITORIA
+  DERROTA
+  CANCELADA
 }
